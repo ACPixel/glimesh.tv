@@ -17,6 +17,7 @@ defmodule Glimesh.CommunityTeam.Policy do
   # Global GCT perms
   def authorize(:view_user, %User{is_gct: true}, _user), do: true
   def authorize(:view_channel, %User{is_gct: true}, _user), do: true
+  def authorize(:view_chat_logs, %User{is_gct: true}, _user), do: true
 
   # GCT Admin perms
   def authorize(:edit_user_profile, %User{is_gct: true, gct_level: 5}, _user), do: true
@@ -71,6 +72,12 @@ defmodule Glimesh.CommunityTeam.Policy do
 
   # GCT Member perms
   def authorize(:edit_user_profile, %User{is_gct: true, gct_level: 2} = current_user, user) do
+    if is_self?(current_user, user) || is_user_higher_level?(current_user, user),
+      do: false,
+      else: true
+  end
+
+  def authorize(:edit_user, %User{is_gct: true, gct_level: 2} = current_user, user) do
     if is_self?(current_user, user) || is_user_higher_level?(current_user, user),
       do: false,
       else: true

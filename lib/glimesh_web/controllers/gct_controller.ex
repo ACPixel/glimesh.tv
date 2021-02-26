@@ -233,6 +233,24 @@ defmodule GlimeshWeb.GctController do
     end
   end
 
+  def channel_chat_log(conn, %{"channel_id" => channel_id}) do
+    current_user = conn.assigns.current_user
+    channel = ChannelLookups.get_channel(channel_id)
+
+    if channel do
+      with :ok <-
+             Bodyguard.permit(Glimesh.CommunityTeam, :view_chat_logs, current_user, channel.user) do
+        CommunityTeam.create_audit_entry(current_user, %{
+          action: "view channel chat log",
+          target: channel_id,
+          verbose_required: true
+        })
+
+        render(conn, "channel_chat_log.html", channel: channel)
+      end
+    end
+  end
+
   def edit_channel(conn, %{"channel_id" => channel_id}) do
     current_user = conn.assigns.current_user
     channel = ChannelLookups.get_channel(channel_id)
@@ -295,7 +313,16 @@ defmodule GlimeshWeb.GctController do
           render(conn, "edit_channel.html",
             channel: channel,
             channel_changeset: changeset,
-            categories: ChannelCategories.list_categories_for_select()
+            categories: ChannelCategories.list_categories_for_select(),
+            channel_delete_disabled:
+              Kernel.not(
+                Bodyguard.permit?(
+                  Glimesh.CommunityTeam,
+                  :soft_delete_channel,
+                  current_user,
+                  channel.user
+                )
+              )
           )
 
         {:error, :unauthorized} ->

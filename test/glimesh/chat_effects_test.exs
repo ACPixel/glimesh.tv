@@ -42,11 +42,8 @@ defmodule Glimesh.ChatEffectsTest do
 
     test "renders appropriate tags for moderator", %{
       channel: channel,
-      streamer: streamer,
       moderator: moderator
     } do
-      {:ok, _} = StreamModeration.create_channel_moderator(streamer, channel, moderator, %{})
-
       assert safe_to_string(Effects.render_channel_badge(channel, moderator)) =~
                "Mod"
 
@@ -62,7 +59,7 @@ defmodule Glimesh.ChatEffectsTest do
       rendered_avatar = safe_to_string(Effects.render_avatar(user))
 
       assert rendered_username =~ "text-warning"
-      assert rendered_username =~ "Glimesh Founder Subscriber"
+      assert rendered_username =~ "Glimesh Gold Supporter Subscriber"
       assert rendered_avatar =~ "avatar-ring avatar-animated-ring platform-founder-ring"
     end
 

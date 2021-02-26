@@ -39,27 +39,17 @@
             </div>
             <div class="row mt-1">
                 <div class="col-sm-6">
-                    <%= label f, gettext("Admin") %>
-                    <%= select f, :is_admin, [Yes: true, No: false], [class: "form-control"] %>
-                    <%= error_tag f, :is_admin %>
-                </div>
-                <div class="col-sm-6">
-                    <%= label f, gettext("Can stream") %>
-                    <%= select f, :can_stream, [Yes: true, No: false], [class: "form-control"] %>
-                    <%= error_tag f, :can_stream %>
-                </div>
-            </div>
-            <div class="row mt-1">
-                <div class="col-sm-6">
                     <%= label f, gettext("2FA Token") %>
                     <%= text_input f, :tfa_token, [class: "form-control"] %>
                     <%= error_tag f, :tfa_token %>
                 </div>
+                <%= if @conn.assigns.current_user.gct_level >= 4 || @conn.assigns.current_user.is_admin do %>
                 <div class="col-sm-6">
                     <%= label f, gettext("Team Role") %>
                     <%= text_input f, :team_role, [class: "form-control"] %>
                     <%= error_tag f, :team_role %>
                 </div>
+                <% end %>
             </div>
             <!-- Billing section of the user -->
             <%= if @view_billing? do %>
@@ -89,8 +79,39 @@
                     <%= error_tag f, :can_payments %>
                 </div>
             </div>
+            <div class="row mt-1">
+                <div class="col">
+                    <%= label f, gettext("Is Stripe Setup") %>
+                    <%= select f, :is_stripe_setup, [Yes: true, No: false], [class: "form-control"] %>
+                    <%= error_tag f, :is_stripe_setup %>
+                </div>
+                <div class="col">
+                    <%= label f, gettext("Is Tax Verified") %>
+                    <%= select f, :is_tax_verified, [Yes: true, No: false], [class: "form-control"] %>
+                    <%= error_tag f, :is_tax_verified %>
+                </div>
+                <div class="col">
+                    <%= label f, gettext("Tax Withholding Percent") %>
+                    <%= number_input f, :tax_withholding_percent, [class: "form-control", step: "0.01", min: "0"] %>
+                    <%= error_tag f, :tax_withholding_percent %>
+                </div>
+            </div>
             <% end %>
-            <%= if @conn.assigns.current_user.gct_level >= 4 do %>
+            <%= if @conn.assigns.current_user.gct_level >= 4 || @conn.assigns.current_user.is_admin do %>
+            <hr>
+            <h5><%= gettext("Admin Settings")%></h5>
+            <div class="row mt-1">
+                <div class="col-sm-6">
+                    <%= label f, gettext("Admin") %>
+                    <%= select f, :is_admin, [Yes: true, No: false], [class: "form-control"] %>
+                    <%= error_tag f, :is_admin %>
+                </div>
+                <div class="col-sm-6">
+                    <%= label f, gettext("Can stream") %>
+                    <%= select f, :can_stream, [Yes: true, No: false], [class: "form-control"] %>
+                    <%= error_tag f, :can_stream %>
+                </div>
+            </div>
             <hr>
             <h5><%= gettext("GCT Settings") %></h5>
             <div class="row mt-1">
@@ -107,6 +128,7 @@
             </div>
             <% end %>
             <hr>
+            <h5><%= gettext("Ban Settings") %></h5>
             <div class="row mt-1">
                 <div class="col-sm-6">
                     <%= label f, gettext("Banned") %>

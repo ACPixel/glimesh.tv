@@ -28,14 +28,17 @@ locales = [
   Suomi: "fi",
   Polski: "pl",
   "Limba Română": "ro",
-  "Português Brasileiro": "pt_br"
+  "Português Brasileiro": "pt_br",
+  Português: "pt",
+  "中文 (简体)": "zh_Hans",
+  "中文 (繁体)": "zh_Hant"
 ]
 
 config :glimesh,
   ecto_repos: [Glimesh.Repo],
   environment: Mix.env(),
   email_physical_address: "1234 Fake St.<br>Pittsburgh, PA 15217",
-  launched: false,
+  run_stream_pruner: true,
   locales: locales
 
 config :waffle,
@@ -147,6 +150,8 @@ config :glimesh, Glimesh.Socials.Twitter,
 
 config :libcluster,
   topologies: []
+
+config :glimesh, Glimesh.PaymentProviders.TaxIDPro, webhook_secret: "", api_key: ""
 
 import_config "badwords.exs"
 import_config "emotes.exs"
